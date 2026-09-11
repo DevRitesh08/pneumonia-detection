@@ -301,7 +301,8 @@ if image is not None:
             with st.spinner("Analyzing image and generating professional report..."):
                 try:
                     genai.configure(api_key=gemini_api_key)
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    # Use gemini-pro for maximum compatibility across API versions
+                    model = genai.GenerativeModel('gemini-pro')
                     
                     prompt = f"""
                     You are an AI radiology assistant. The deep learning model has analyzed a chest X-Ray and provided the following result:

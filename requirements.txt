@@ -1,9 +1,6 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.2.2+cpu
-torchvision==0.17.2+cpu
-streamlit>=1.28.0
-numpy>=1.24.0
-Pillow>=9.5.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-scikit-learn>=1.2.0
+torch
+torchvision
+streamlit
+numpy
+Pillow

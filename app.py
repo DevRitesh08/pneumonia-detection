@@ -301,19 +301,30 @@ if image is not None:
             with st.spinner("Analyzing image and generating professional report..."):
                 try:
                     genai.configure(api_key=gemini_api_key)
-                    # Use gemini-pro for maximum compatibility across API versions
-                    model = genai.GenerativeModel('gemini-pro')
                     
-                    prompt = f"""
-                    You are an AI radiology assistant. The deep learning model has analyzed a chest X-Ray and provided the following result:
-                    Diagnosis: {pred_name}
-                    Confidence: {confidence[pred_idx]*100:.1f}%
-                    
-                    Please generate a short, professional mock medical report based on this finding. Include a disclaimer that this is AI-generated and requires clinical correlation. Keep it concise (3-4 paragraphs).
-                    """
-                    response = model.generate_content(prompt)
-                    st.success("Report Generated Successfully!")
-                    st.write(response.text)
+                    # Dynamically find an available model that supports text generation
+                    valid_model_name = None
+                    for m in genai.list_models():
+                        if 'generateContent' in m.supported_generation_methods:
+                            valid_model_name = m.name
+                            if "flash" in valid_model_name or "pro" in valid_model_name:
+                                break # Prefer flash or pro if available
+                                
+                    if not valid_model_name:
+                        st.error("No valid text generation models found for this API key.")
+                    else:
+                        model = genai.GenerativeModel(valid_model_name)
+                        
+                        prompt = f"""
+                        You are an AI radiology assistant. The deep learning model has analyzed a chest X-Ray and provided the following result:
+                        Diagnosis: {pred_name}
+                        Confidence: {confidence[pred_idx]*100:.1f}%
+                        
+                        Please generate a short, professional mock medical report based on this finding. Include a disclaimer that this is AI-generated and requires clinical correlation. Keep it concise (3-4 paragraphs).
+                        """
+                        response = model.generate_content(prompt)
+                        st.success(f"Report Generated Successfully using {valid_model_name}!")
+                        st.write(response.text)
                 except Exception as e:
                     st.error(f"Failed to generate report: {e}")
 

@@ -4,3 +4,5 @@ torchvision
 streamlit
 numpy
 Pillow
+google-generativeai
+matplotlib
